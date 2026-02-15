@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="box">
+  <h2 id="message"></h2>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+async function loadDashboard() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const res = await fetch("http://localhost:5000/api/auth/dashboard", {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+
+  const data = await res.json();
+
+  if (!data.message || data.message === "Invalid token") {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  } else {
+    document.getElementById("message").innerText = data.message;
+  }
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>
